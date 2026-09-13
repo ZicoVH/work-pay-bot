@@ -10,7 +10,12 @@ function formatDuration(minutes: number): string {
 }
 
 function formatEuro(amount: number): string {
-    return `€${amount.toFixed(2)}`;
+    return new Intl.NumberFormat("nl-BE", {
+        style: "currency",
+        currency: "EUR",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(amount);
 }
 
 export function formatResult(result: ShiftCalculation): string {

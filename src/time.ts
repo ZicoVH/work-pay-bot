@@ -1,8 +1,5 @@
+import { TIME_CONFIG } from "./config.js";
 import type { Shift, Time } from "./types.js";
-
-const NIGHT_START_MINUTES = 20 * 60;
-const REGULAR_WORK_MINUTES = 9 * 60;
-const MINUTES_PER_DAY = 24 * 60;
 
 export function parseShift(text: string): Shift | null {
     const matches = [...text.matchAll(/(\d{1,2})[:u.](\d{2})/gi)];
@@ -48,7 +45,7 @@ function getNormalizedEndMinutes(start: Time, end: Time): number {
     let endMinutes = toMinutes(end);
 
     if (endMinutes < startMinutes) {
-        endMinutes += MINUTES_PER_DAY;
+        endMinutes += TIME_CONFIG.minutesPerDay;
     }
 
     return endMinutes;
@@ -69,21 +66,21 @@ export function calculateNightMinutes(shift: Shift): number {
     let nightMinutes = 0;
 
      // 20:00 -> 24:00
-     const firstNightStart = Math.max(startMinutes, NIGHT_START_MINUTES);
-     const firstNightEnd = Math.min(endMinutes, MINUTES_PER_DAY);
+     const firstNightStart = Math.max(startMinutes, TIME_CONFIG.nightStartMinutes);
+     const firstNightEnd = Math.min(endMinutes, TIME_CONFIG.minutesPerDay);
  
      if (firstNightEnd > firstNightStart) {
          nightMinutes += firstNightEnd - firstNightStart;
      }
  
      // 00:00 -> end of shift
-     if (endMinutes > MINUTES_PER_DAY) {
-         nightMinutes += endMinutes - MINUTES_PER_DAY;
+     if (endMinutes > TIME_CONFIG.minutesPerDay) {
+         nightMinutes += endMinutes - TIME_CONFIG.minutesPerDay;
      }
  
      return nightMinutes;
 }
 
 export function calculateOvertimeMinutes(workedMinutes: number): number {
-    return Math.max(0, workedMinutes - REGULAR_WORK_MINUTES);
+    return Math.max(0, workedMinutes - TIME_CONFIG.regularWorkMinutes);
 }

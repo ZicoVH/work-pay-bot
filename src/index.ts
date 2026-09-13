@@ -5,6 +5,7 @@ import { Bot } from "grammy";
 import { parseShift } from "./time.js";
 import { calculateShift } from "./calculator.js";
 import { formatResult } from "./formatter.js";
+import { PAY_CONFIG } from "./config.js";
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 
@@ -15,6 +16,33 @@ if (!token) {
 }
 
 const bot = new Bot(token);
+
+bot.command("help", async (ctx) => {
+    await ctx.reply(
+        "💰 Work Pay Bot\n\n" +
+        "Stuur twee tijdstippen om je loon te berekenen.\n\n" +
+        "Voorbeeld:\n" +
+        "17:30 01:30\n\n" +
+        "Commando's:\n" +
+        "/help - Toon deze uitleg\n" +
+        "/rates - Toon de gebruikte tarieven"
+    );
+});
+
+bot.command("rates", async (ctx) => {
+    await ctx.reply(
+        "💶 Tarieven\n\n" +
+        `Basisloon: €${PAY_CONFIG.hourlyRate.toFixed(2)}/u\n` +
+        `Nachtpremie: €${PAY_CONFIG.nightBonusPerHour.toFixed(3)}/u\n` +
+        `Nachtwerk: vanaf ${PAY_CONFIG.nightStartHour}:00\n` +
+        `Overuren: na ${PAY_CONFIG.regularWorkHours} uur\n` +
+        `Overurentarief: €${PAY_CONFIG.overtimeRate.toFixed(3)}/u\n` +
+        `Koudepremie: €${PAY_CONFIG.coldBonus.toFixed(4)}/shift\n` +
+        `Vakantiegeld: ${(PAY_CONFIG.holidayPayPercentage * 100).toFixed(2)}%\n` +
+        `Kledijvergoeding: €${PAY_CONFIG.clothingAllowance.toFixed(2)}/shift\n` +
+        `Woon-werkvergoeding: €${PAY_CONFIG.travelAllowance.toFixed(2)}/shift`
+    );
+});
 
 bot.on("message:text", async (ctx) => {
     const shift = parseShift(ctx.message.text);

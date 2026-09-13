@@ -1,14 +1,5 @@
+import { PAY_CONFIG } from "./config.js";
 import type { PayCalculation } from "./types.js";
-
-const HOURLY_RATE = 15.85;
-const NIGHT_BONUS_PER_HOUR = 4.755;
-const OVERTIME_RATE = 23.775;
-
-const COLD_BONUS = 0.7925 + 1.585;
-const CLOTHING_ALLOWANCE = 1.44;
-const TRAVEL_ALLOWANCE = 2.63;
-
-const HOLIDAY_PAY_PERCENTAGE = 0.0767;
 
 export function calculatePay(
     workedMinutes: number,
@@ -17,32 +8,38 @@ export function calculatePay(
 ): PayCalculation {
     const regularMinutes = workedMinutes - overtimeMinutes;
 
-    const regularPay = (regularMinutes / 60) * HOURLY_RATE;
-    const nightBonus = (nightMinutes / 60) * NIGHT_BONUS_PER_HOUR;
-    const overtimePay = (overtimeMinutes / 60) * OVERTIME_RATE;
+    const regularPay =
+        (regularMinutes / 60) * PAY_CONFIG.hourlyRate;
+
+    const nightBonus =
+        (nightMinutes / 60) * PAY_CONFIG.nightBonusPerHour;
+
+    const overtimePay =
+        (overtimeMinutes / 60) * PAY_CONFIG.overtimeRate;
 
     const taxableBase =
         regularPay +
         nightBonus +
         overtimePay +
-        COLD_BONUS;
+        PAY_CONFIG.coldBonus;
 
-    const holidayPay = taxableBase * HOLIDAY_PAY_PERCENTAGE;
+    const holidayPay =
+        taxableBase * PAY_CONFIG.holidayPayPercentage;
 
     const estimatedNet =
         taxableBase +
         holidayPay +
-        CLOTHING_ALLOWANCE +
-        TRAVEL_ALLOWANCE;
+        PAY_CONFIG.clothingAllowance +
+        PAY_CONFIG.travelAllowance;
 
     return {
         regularPay,
         nightBonus,
         overtimePay,
-        coldBonus: COLD_BONUS,
+        coldBonus: PAY_CONFIG.coldBonus,
         holidayPay,
-        clothingAllowance: CLOTHING_ALLOWANCE,
-        travelAllowance: TRAVEL_ALLOWANCE,
+        clothingAllowance: PAY_CONFIG.clothingAllowance,
+        travelAllowance: PAY_CONFIG.travelAllowance,
         estimatedNet,
     };
 }
