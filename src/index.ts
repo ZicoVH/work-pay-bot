@@ -17,6 +17,16 @@ if (!token) {
 
 const bot = new Bot(token);
 
+bot.command("start", async (ctx) => {
+    await ctx.reply(
+        "👋 Welkom bij Work Pay Bot!\n\n" +
+        "Stuur je start- en einduur en ik bereken hoeveel je ongeveer verdiend hebt.\n\n" +
+        "Bijvoorbeeld:\n" +
+        "17:30 01:30\n\n" +
+        "Typ /help voor meer informatie."
+    );
+});
+
 bot.command("help", async (ctx) => {
     await ctx.reply(
         "💰 Work Pay Bot\n\n" +
@@ -79,6 +89,25 @@ bot.on("message:text", async (ctx) => {
         formatResult(calculation)
     );
 });
+
+await bot.api.setMyCommands([
+    {
+        command: "start",
+        description: "Start de bot",
+    },
+    {
+        command: "help",
+        description: "Toon uitleg",
+    },
+    {
+        command: "rates",
+        description: "Toon de gebruikte tarieven",
+    },
+    {
+        command: "details",
+        description: "Toon een volledige berekening",
+    },
+]);
 
 bot.start();
 
