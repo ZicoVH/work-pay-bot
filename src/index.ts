@@ -4,7 +4,7 @@ import { Bot } from "grammy";
 
 import { parseShift } from "./time.js";
 import { calculateShift } from "./calculator.js";
-import { formatResult } from "./formatter.js";
+import { formatResult,formatDetailedResult } from "./formatter.js";
 import { PAY_CONFIG } from "./config.js";
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -25,7 +25,8 @@ bot.command("help", async (ctx) => {
         "17:30 01:30\n\n" +
         "Commando's:\n" +
         "/help - Toon deze uitleg\n" +
-        "/rates - Toon de gebruikte tarieven"
+        "/rates - Toon de gebruikte tarieven\n" +
+        "/details 17:30 01:30 - Toon de volledige berekening"
     );
 });
 
@@ -41,6 +42,23 @@ bot.command("rates", async (ctx) => {
         `Vakantiegeld: ${(PAY_CONFIG.holidayPayPercentage * 100).toFixed(2)}%\n` +
         `Kledijvergoeding: €${PAY_CONFIG.clothingAllowance.toFixed(2)}/shift\n` +
         `Woon-werkvergoeding: €${PAY_CONFIG.travelAllowance.toFixed(2)}/shift`
+    );
+});
+
+bot.command("details", async (ctx) => {
+    const shift = parseShift(ctx.match);
+
+    if (!shift) {
+        await ctx.reply(
+            "Gebruik bijvoorbeeld: /details 17:30 01:30"
+        );
+        return;
+    }
+
+    const calculation = calculateShift(shift);
+
+    await ctx.reply(
+        formatDetailedResult(calculation)
     );
 });
 
