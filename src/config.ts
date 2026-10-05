@@ -6,7 +6,7 @@ export const PAY_CONFIG = {
     clothingAllowance: 1.44,
     travelAllowance: 2.63,
     holidayPayPercentage: 0.0767,
-    nightStartHour: 20,
+    nightStartHour: 22,
     regularWorkHours: 9,
 };
 
